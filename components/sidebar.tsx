@@ -33,15 +33,20 @@ const routes = [
     icon: Settings,
     href: "/settings",
   },
+  {
+    label: "Cashbook",
+    icon: Settings,
+    href: "/cashbook",
+  },
 ];
 
 export default function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <div className="space-y-4 py-4 flex flex-col h-full bg-muted/50 border-r">
-      <div className="px-3 py-2">
-        <h2 className="mb-2 px-4 text-lg font-semibold">ShopMaster</h2>
+    <div className="space-y-2 py-2 flex flex-col h-full bg-muted/50 border-r w-1/6">
+      <div className="px-1 py-1">
+        <h2 className="mb-1 px-1 text-lg font-semibold">ShopMaster</h2>
         <div className="space-y-1">
           {routes.map((route) => (
             <Link key={route.href} href={route.href}>
@@ -51,7 +56,7 @@ export default function Sidebar() {
                   "bg-secondary": pathname === route.href,
                 })}
               >
-                <route.icon className="mr-2 h-4 w-4" />
+                <route.icon className="mr-1 h-4 w-4" />
                 {route.label}
               </Button>
             </Link>
