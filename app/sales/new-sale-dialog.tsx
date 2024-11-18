@@ -46,19 +46,18 @@ export default function NewSaleDialog({ open, onClose }: NewSaleDialogProps) {
         <div className="space-y-4 py-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="customer">Customer Name</Label>
-              <Input id="customer" placeholder="Enter customer name" />
-            </div>
-            <div className="space-y-2">
               <Label htmlFor="payment">Payment Method</Label>
               <Select>
                 <SelectTrigger>
                   <SelectValue placeholder="Select payment method" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="cash">Cash</SelectItem>
-                  <SelectItem value="card">Card</SelectItem>
-                  <SelectItem value="transfer">Bank Transfer</SelectItem>
+                  <SelectItem value="cash">USD Cash</SelectItem>
+                  <SelectItem value="card">Zig Cash</SelectItem>
+                  <SelectItem value="ecocashzw">Ecocash Zig</SelectItem>
+                  <SelectItem value="ecocashusd">Ecocash USD</SelectItem>
+                  <SelectItem value="rand">Rand</SelectItem>
+                  <SelectItem value="credit">Credit</SelectItem>
                 </SelectContent>
               </Select>
             </div>
