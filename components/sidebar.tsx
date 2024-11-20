@@ -3,7 +3,7 @@
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Package, ShoppingCart, BarChart3, Settings, Home } from "lucide-react";
+import { Package, ShoppingCart, BarChart3, Settings, Home, BookOpen } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -29,15 +29,16 @@ const routes = [
     href: "/analytics",
   },
   {
+    label: "Cashbook",
+    icon: BookOpen,
+    href: "/cashbook",
+  },
+  {
     label: "Settings",
     icon: Settings,
     href: "/settings",
   },
-  {
-    label: "Cashbook",
-    icon: Settings,
-    href: "/cashbook",
-  },
+ 
 ];
 
 export default function Sidebar() {

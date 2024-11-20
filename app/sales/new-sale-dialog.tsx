@@ -18,6 +18,23 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { initializeApp } from 'firebase/app';
+import { getFirestore, collection, addDoc } from 'firebase/firestore';
+
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyCh2l4fzyf7CSxtkcMuhIPnuScKJUz7dOI",
+  authDomain: "shoptracker-fc62f.firebaseapp.com",
+  projectId: "shoptracker-fc62f",
+  storageBucket: "shoptracker-fc62f.firebasestorage.app",
+  messagingSenderId: "967252844439",
+  appId: "1:967252844439:web:85eb038f4972f935972ed2",
+  measurementId: "G-8GVYLJ33J2"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 interface NewSaleDialogProps {
   open: boolean;
@@ -26,6 +43,7 @@ interface NewSaleDialogProps {
 
 export default function NewSaleDialog({ open, onClose }: NewSaleDialogProps) {
   const [items, setItems] = useState<Array<{ id: number; name: string; quantity: number; price: number }>>([]);
+  const [total, setTotal] = useState(0);
 
   const addItem = () => {
     setItems([...items, { id: Date.now(), name: "", quantity: 1, price: 0 }]);
@@ -35,7 +53,26 @@ export default function NewSaleDialog({ open, onClose }: NewSaleDialogProps) {
     setItems(items.filter(item => item.id !== id));
   };
 
-  const total = items.reduce((sum, item) => sum + item.quantity * item.price, 0);
+  const calculateTotal = () => {
+    const newTotal = items.reduce((sum, item) => sum + item.quantity * item.price, 0);
+    setTotal(newTotal);
+  };
+
+  const handleCompleteSale = async () => {
+    try {
+      const saleData = {
+        items,
+        total,
+        createdAt: new Date(),
+      };
+      await addDoc(collection(db, "sales"), saleData);
+      alert("Sale completed successfully!");
+      onClose();
+    } catch (error) {
+      console.error("Error adding document: ", error);
+      alert("Failed to complete sale.");
+    }
+  };
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -105,6 +142,7 @@ export default function NewSaleDialog({ open, onClose }: NewSaleDialogProps) {
                           const index = newItems.findIndex((i) => i.id === item.id);
                           newItems[index].quantity = parseInt(e.target.value);
                           setItems(newItems);
+                          calculateTotal();
                         }}
                       />
                     </TableCell>
@@ -119,6 +157,7 @@ export default function NewSaleDialog({ open, onClose }: NewSaleDialogProps) {
                           const index = newItems.findIndex((i) => i.id === item.id);
                           newItems[index].price = parseFloat(e.target.value);
                           setItems(newItems);
+                          calculateTotal();
                         }}
                       />
                     </TableCell>
@@ -153,7 +192,7 @@ export default function NewSaleDialog({ open, onClose }: NewSaleDialogProps) {
               <Button variant="outline" onClick={onClose}>
                 Cancel
               </Button>
-              <Button>Complete Sale</Button>
+              <Button onClick={handleCompleteSale}>Complete Sale</Button>
             </div>
           </div>
         </div>
