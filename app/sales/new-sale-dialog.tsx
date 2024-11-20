@@ -44,6 +44,7 @@ interface NewSaleDialogProps {
 export default function NewSaleDialog({ open, onClose }: NewSaleDialogProps) {
   const [items, setItems] = useState<Array<{ id: number; name: string; quantity: number; price: number }>>([]);
   const [total, setTotal] = useState(0);
+  const [paymentMethod, setPaymentMethod] = useState<string>('');
 
   const addItem = () => {
     setItems([...items, { id: Date.now(), name: "", quantity: 1, price: 0 }]);
@@ -63,8 +64,10 @@ export default function NewSaleDialog({ open, onClose }: NewSaleDialogProps) {
       const saleData = {
         items,
         total,
+        paymentMethod,
         createdAt: new Date(),
       };
+      console.log("Sale Data:", saleData);
       await addDoc(collection(db, "sales"), saleData);
       alert("Sale completed successfully!");
       onClose();
@@ -84,7 +87,7 @@ export default function NewSaleDialog({ open, onClose }: NewSaleDialogProps) {
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="payment">Payment Method</Label>
-              <Select>
+              <Select onValueChange={setPaymentMethod}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select payment method" />
                 </SelectTrigger>
@@ -121,7 +124,14 @@ export default function NewSaleDialog({ open, onClose }: NewSaleDialogProps) {
                 {items.map((item) => (
                   <TableRow key={item.id}>
                     <TableCell>
-                      <Select>
+                      <Select
+                        onValueChange={(value) => {
+                          const newItems = [...items];
+                          const index = newItems.findIndex((i) => i.id === item.id);
+                          newItems[index].name = value;
+                          setItems(newItems);
+                        }}
+                      >
                         <SelectTrigger>
                           <SelectValue placeholder="Select product" />
                         </SelectTrigger>
