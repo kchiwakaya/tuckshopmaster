@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -19,7 +19,8 @@ import {
 } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, addDoc } from 'firebase/firestore';
+import { getFirestore, collection, addDoc, getDocs } from 'firebase/firestore';
+import { productsCollection } from './productsCollection';
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -45,6 +46,17 @@ export default function NewSaleDialog({ open, onClose }: NewSaleDialogProps) {
   const [items, setItems] = useState<Array<{ id: number; name: string; quantity: number; price: number }>>([]);
   const [total, setTotal] = useState(0);
   const [paymentMethod, setPaymentMethod] = useState<string>('');
+  const [products, setProducts] = useState<Array<{ id: string; name: string }>>([]);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      const querySnapshot = await getDocs(productsCollection);
+      const productsList = querySnapshot.docs.map(doc => ({ id: doc.id, name: doc.data().name }));
+      setProducts(productsList);
+    };
+
+    fetchProducts();
+  }, []);
 
   const addItem = () => {
     setItems([...items, { id: Date.now(), name: "", quantity: 1, price: 0 }]);
@@ -136,9 +148,11 @@ export default function NewSaleDialog({ open, onClose }: NewSaleDialogProps) {
                           <SelectValue placeholder="Select product" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="laptop">Laptop</SelectItem>
-                          <SelectItem value="smartphone">Smartphone</SelectItem>
-                          <SelectItem value="headphones">Headphones</SelectItem>
+                          {products.map(product => (
+                            <SelectItem key={product.id} value={product.name}>
+                              {product.name}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                     </TableCell>
