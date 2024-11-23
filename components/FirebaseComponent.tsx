@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getAuth, signInWithEmailAndPassword, signOut } from 'firebase/auth';
-import app from '../firebaseConfig'; // Import the initialized app
+import { app } from '../firebaseConfig'; // Import the initialized app
 import { getFirestore } from 'firebase/firestore'; // Import Firestore functions
 
 const auth = getAuth(app);

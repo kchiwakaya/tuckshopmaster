@@ -20,7 +20,7 @@ import {
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, addDoc, getDocs } from 'firebase/firestore';
-import { productsCollection } from './productsCollection';
+
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -36,6 +36,7 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const productsCollection = collection(db, "products");
 
 interface NewSaleDialogProps {
   open: boolean;
@@ -51,7 +52,7 @@ export default function NewSaleDialog({ open, onClose }: NewSaleDialogProps) {
   useEffect(() => {
     const fetchProducts = async () => {
       const querySnapshot = await getDocs(productsCollection);
-      const productsList = querySnapshot.docs.map(doc => ({ id: doc.id, name: doc.data().name }));
+      const productsList = querySnapshot.docs.map(doc => ({ id: doc.id, name: (doc.data() as { name: string }).name }));
       setProducts(productsList);
     };
 

@@ -16,6 +16,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useState } from "react";
+import { getFirestore } from "firebase/firestore";
+import { collection, addDoc } from "firebase/firestore";
 
 interface AddProductDialogProps {
   open: boolean;
@@ -23,6 +26,28 @@ interface AddProductDialogProps {
 }
 
 export default function AddProductDialog({ open, onClose }: AddProductDialogProps) {
+  const [name, setName] = useState("");
+  const [sku, setSku] = useState("");
+  const [category, setCategory] = useState("");
+  const [quantity, setQuantity] = useState(0);
+  const [price, setPrice] = useState(0);
+  const firestore = getFirestore();
+
+  const handleSubmit = async () => {
+    try {
+      await addDoc(collection(firestore, "products"), {
+        name,
+        sku,
+        category,
+        quantity,
+        price,
+      });
+      onClose();
+    } catch (error) {
+      console.error("Error adding document: ", error);
+    }
+  };
+
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent>
@@ -32,15 +57,15 @@ export default function AddProductDialog({ open, onClose }: AddProductDialogProp
         <div className="space-y-4 py-4">
           <div className="space-y-2">
             <Label htmlFor="name">Product Name</Label>
-            <Input id="name" placeholder="Enter product name" />
+            <Input id="name" placeholder="Enter product name" value={name} onChange={(e) => setName(e.target.value)} />
           </div>
           <div className="space-y-2">
             <Label htmlFor="sku">SKU</Label>
-            <Input id="sku" placeholder="Enter SKU" />
+            <Input id="sku" placeholder="Enter SKU" value={sku} onChange={(e) => setSku(e.target.value)} />
           </div>
           <div className="space-y-2">
             <Label htmlFor="category">Category</Label>
-            <Select>
+            <Select onValueChange={setCategory}>
               <SelectTrigger>
                 <SelectValue placeholder="Select category" />
               </SelectTrigger>
@@ -58,6 +83,8 @@ export default function AddProductDialog({ open, onClose }: AddProductDialogProp
               type="number"
               placeholder="Enter quantity"
               min="0"
+              value={quantity}
+              onChange={(e) => setQuantity(Number(e.target.value))}
             />
           </div>
           <div className="space-y-2">
@@ -68,6 +95,8 @@ export default function AddProductDialog({ open, onClose }: AddProductDialogProp
               placeholder="Enter price"
               min="0"
               step="0.01"
+              value={price}
+              onChange={(e) => setPrice(Number(e.target.value))}
             />
           </div>
         </div>
@@ -75,7 +104,7 @@ export default function AddProductDialog({ open, onClose }: AddProductDialogProp
           <Button variant="outline" onClick={onClose}>
             Cancel
           </Button>
-          <Button>Save Product</Button>
+          <Button onClick={handleSubmit}>Save Product</Button>
         </div>
       </DialogContent>
     </Dialog>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -13,43 +13,54 @@ import {
 import { Input } from "@/components/ui/input";
 import { Plus, Search } from "lucide-react";
 import AddProductDialog from "./add-product-dialog";
+import { db } from "../../firebaseConfig";
+import { collection, getDocs } from "firebase/firestore";
 
-const inventory = [
-  {
-    id: 1,
-    name: "Laptop",
-    sku: "LAP001",
-    quantity: 15,
-    price: 999.99,
-    category: "Electronics",
-  },
-  {
-    id: 2,
-    name: "Smartphone",
-    sku: "PHN001",
-    quantity: 25,
-    price: 699.99,
-    category: "Electronics",
-  },
-  {
-    id: 3,
-    name: "Headphones",
-    sku: "AUD001",
-    quantity: 50,
-    price: 99.99,
-    category: "Accessories",
-  },
-];
+interface InventoryItem {
+  id: string;
+  name: string;
+  sku: string;
+  category: string;
+  quantity: number;
+  price: number;
+}
 
 export default function InventoryPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [showAddDialog, setShowAddDialog] = useState(false);
+  const [inventory, setInventory] = useState<InventoryItem[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+
+  useEffect(() => {
+    const fetchInventory = async () => {
+      const inventoryCollection = collection(db, "products");
+      const inventorySnapshot = await getDocs(inventoryCollection);
+      const inventoryList = inventorySnapshot.docs.map(doc => ({
+        id: doc.id,
+        name: doc.data().name,
+        sku: doc.data().sku,
+        category: doc.data().category,
+        quantity: doc.data().quantity,
+        price: doc.data().price,
+      }));
+      setInventory(inventoryList);
+    };
+
+    fetchInventory();
+  }, []);
 
   const filteredInventory = inventory.filter(
     (item) =>
-      item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.sku.toLowerCase().includes(searchTerm.toLowerCase())
+      (item.name && item.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (item.sku && item.sku.toLowerCase().includes(searchTerm.toLowerCase()))
   );
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredInventory.slice(indexOfFirstItem, indexOfLastItem);
+
+  const totalPages = Math.ceil(filteredInventory.length / itemsPerPage);
 
   return (
     <div className="p-8 space-y-8">
@@ -89,7 +100,7 @@ export default function InventoryPage() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {filteredInventory.map((item) => (
+          {currentItems.map((item) => (
             <TableRow key={item.id}>
               <TableCell className="font-medium">{item.name}</TableCell>
               <TableCell>{item.sku}</TableCell>
@@ -105,6 +116,22 @@ export default function InventoryPage() {
           ))}
         </TableBody>
       </Table>
+
+      <div className="flex justify-between">
+        <Button 
+          onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} 
+          disabled={currentPage === 1}
+        >
+          Previous
+        </Button>
+        <span>Page {currentPage} of {totalPages}</span>
+        <Button 
+          onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} 
+          disabled={currentPage === totalPages}
+        >
+          Next
+        </Button>
+      </div>
 
       <AddProductDialog open={showAddDialog} onClose={() => setShowAddDialog(false)} />
     </div>
