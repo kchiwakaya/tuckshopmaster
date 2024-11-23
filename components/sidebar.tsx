@@ -47,7 +47,7 @@ export default function Sidebar() {
   return (
     <div className="space-y-2 py-2 flex flex-col h-full bg-muted/50 border-r w-1/6">
       <div className="px-1 py-1">
-        <h2 className="mb-1 px-1 text-lg font-semibold">ShopMaster</h2>
+        <h2 className="mb-1 px-1 text-lg font-semibold">Black Liquids</h2>
         <div className="space-y-1">
           {routes.map((route) => (
             <Link key={route.href} href={route.href}>
