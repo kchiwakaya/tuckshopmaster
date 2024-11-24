@@ -29,9 +29,9 @@ const routes = [
     href: "/analytics",
   },
   {
-    label: "Cashbook",
+    label: "Expenses",
     icon: BookOpen,
-    href: "/cashbook",
+    href: "/expenses",
   },
   {
     label: "Settings",
