@@ -29,7 +29,6 @@ export default function AddProductDialog({ open, onClose }: AddProductDialogProp
   const [name, setName] = useState("");
   const [sku, setSku] = useState("");
   const [category, setCategory] = useState("");
-  const [quantity, setQuantity] = useState(0);
   const [price, setPrice] = useState(0);
   const firestore = getFirestore();
 
@@ -39,7 +38,6 @@ export default function AddProductDialog({ open, onClose }: AddProductDialogProp
         name,
         sku,
         category,
-        quantity,
         price,
       });
       onClose();
@@ -70,25 +68,18 @@ export default function AddProductDialog({ open, onClose }: AddProductDialogProp
                 <SelectValue placeholder="Select category" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="electronics">Electronics</SelectItem>
-                <SelectItem value="accessories">Accessories</SelectItem>
-                <SelectItem value="clothing">Clothing</SelectItem>
+                <SelectItem value="clear">Clear Beer</SelectItem>
+                <SelectItem value="Opaque">Opaque Beer</SelectItem>
+                <SelectItem value="Biscuits">Biscuits</SelectItem>
+                <SelectItem value="Snax">Snax</SelectItem>
+                <SelectItem value="Other">Other</SelectItem>
+                <SelectItem value="Soft">Soft Drinks</SelectItem>
+                <SelectItem value="Spirits">Spirits</SelectItem>
               </SelectContent>
             </Select>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="quantity">Quantity</Label>
-            <Input
-              id="quantity"
-              type="number"
-              placeholder="Enter quantity"
-              min="0"
-              value={quantity}
-              onChange={(e) => setQuantity(Number(e.target.value))}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="price">Price</Label>
+            <Label htmlFor="price">Selling Price</Label>
             <Input
               id="price"
               type="number"

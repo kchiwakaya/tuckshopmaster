@@ -15,13 +15,13 @@ import { Plus, Search } from "lucide-react";
 import AddProductDialog from "./add-product-dialog";
 import { db } from "../../firebaseConfig";
 import { collection, getDocs } from "firebase/firestore";
+import { Card, CardTitle, CardHeader, CardContent } from "@/components/ui/card";
 
 interface InventoryItem {
   id: string;
   name: string;
   sku: string;
   category: string;
-  quantity: number;
   price: number;
 }
 
@@ -41,7 +41,6 @@ export default function InventoryPage() {
         name: doc.data().name,
         sku: doc.data().sku,
         category: doc.data().category,
-        quantity: doc.data().quantity,
         price: doc.data().price,
       }));
       setInventory(inventoryList);
@@ -71,6 +70,16 @@ export default function InventoryPage() {
             Manage your product inventory and stock levels
           </p>
         </div>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Add Product</CardTitle>
+          </CardHeader> 
+          <CardContent>
+            <div className="text-2xl font-bold">
+              <a href="inventory/addproduct" className="text-blue-500 hover:underline">Add New Product</a>
+            </div>
+          </CardContent>
+        </Card>
         <Button onClick={() => setShowAddDialog(true)}>
           <Plus className="mr-2 h-4 w-4" /> Add Product
         </Button>
@@ -94,7 +103,6 @@ export default function InventoryPage() {
             <TableHead>Name</TableHead>
             <TableHead>SKU</TableHead>
             <TableHead>Category</TableHead>
-            <TableHead>Quantity</TableHead>
             <TableHead>Price</TableHead>
             <TableHead>Actions</TableHead>
           </TableRow>
@@ -105,7 +113,6 @@ export default function InventoryPage() {
               <TableCell className="font-medium">{item.name}</TableCell>
               <TableCell>{item.sku}</TableCell>
               <TableCell>{item.category}</TableCell>
-              <TableCell>{item.quantity}</TableCell>
               <TableCell>${item.price.toFixed(2)}</TableCell>
               <TableCell>
                 <Button variant="outline" size="sm">
