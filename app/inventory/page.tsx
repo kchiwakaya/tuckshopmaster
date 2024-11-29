@@ -28,6 +28,7 @@ interface InventoryItem {
 export default function InventoryPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [showAddDialog, setShowAddDialog] = useState(false);
+  const [showStockDialog, setShowStockDialog] = useState(false);
   const [inventory, setInventory] = useState<InventoryItem[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
@@ -70,16 +71,9 @@ export default function InventoryPage() {
             Manage your product inventory and stock levels
           </p>
         </div>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Add Product</CardTitle>
-          </CardHeader> 
-          <CardContent>
-            <div className="text-2xl font-bold">
-              <a href="inventory/addproduct" className="text-blue-500 hover:underline">Add New Product</a>
-            </div>
-          </CardContent>
-        </Card>
+        <Button className = "" onClick={() => setShowStockDialog(true)}>
+          <Plus className="mr-2 h-4 w-4" /> Add stock
+        </Button>
         <Button onClick={() => setShowAddDialog(true)}>
           <Plus className="mr-2 h-4 w-4" /> Add Product
         </Button>
